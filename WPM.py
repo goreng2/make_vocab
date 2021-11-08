@@ -2,6 +2,7 @@ from tokenizers import Tokenizer
 from tokenizers.models import WordPiece
 from tokenizers.trainers import WordPieceTrainer
 import os
+import json
 
 
 def parse_corpus_path():
@@ -18,20 +19,20 @@ def WPM(size, corpora):
         vocab_size=size, special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"]
     )
     wpm_tokenizer.train(corpora, trainer)
-    wpm_tokenizer.save("vocab/WPM_everyone.json")
+    wpm_tokenizer.save("vocab_wpm.json")
 
 
 def main():
     # corpus_paths = parse_corpus_path()
-    corpus_paths = ["corpus/corpus_pp.txt"]
-    WPM(32000, corpus_paths)
+    corpus_paths = ["kowiki.txt"]
+    WPM(10000, corpus_paths)
 
-    # with open(output_json, "r", encoding="utf-8") as f:
-    #     body = json.loads(f.read())
-    # vocab = body["model"]["vocab"]
-    #
-    # with open(output, "w", encoding="utf-8") as f:
-    #     f.write("\n".join(vocab.keys()))
+    with open("vocab_wpm.json", "r", encoding="utf-8") as f:
+        body = json.loads(f.read())
+    vocab = body["model"]["vocab"]
+
+    with open("vocab_wpm.txt", "w", encoding="utf-8") as f:
+        f.write("\n".join(vocab.keys()))
 
 
 if __name__ == '__main__':

@@ -26,4 +26,5 @@ tokenizer.train(
     vocab_size=args.vocab_size
 )
 
-tokenizer.save("./", "ch-{}-wpm-{}".format(args.limit_alphabet, args.vocab_size))
+# tokenizer.save("./", "ch-{}-wpm-{}".format(args.limit_alphabet, args.vocab_size))
+tokenizer.save("./", "vocab_wpm2.txt")

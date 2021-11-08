@@ -45,8 +45,8 @@ def refine_vocab(dest: str) -> None:
 def main(corpus, size, output):
     train_SPM(corpus, size)
     refine_vocab(output)
-    os.remove("sentpiece.vocab")
-    os.remove("sentpiece.model")
+    # os.remove("sentpiece.vocab")
+    # os.remove("sentpiece.model")
 
 
 if __name__ == "__main__":
