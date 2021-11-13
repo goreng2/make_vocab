@@ -1,30 +1,37 @@
-import os
 import argparse
+import os
 from tokenizers import BertWordPieceTokenizer  # pip install tokenizers==0.7.0
 
 
-parser = argparse.ArgumentParser()
+def train(corpus: list, size: int, limit: int, output: str) -> None:
+    tokenizer = BertWordPieceTokenizer(
+        vocab_file=None,
+        clean_text=True,
+        handle_chinese_chars=True,
+        strip_accents=False,  # Must be False if cased model
+        lowercase=False,
+        wordpieces_prefix="##"
+    )
+    tokenizer.train(
+        files=corpus,
+        limit_alphabet=limit,
+        vocab_size=size
+    )
+    # tokenizer.save("./", "ch-{}-wpm-{}".format(args.limit_alphabet, args.vocab_size))
+    path, filename = os.path.split(output)
+    tokenizer.save(path, filename)
 
-parser.add_argument("--corpus_file", type=str)
-parser.add_argument("--vocab_size", type=int, default=32000)
-parser.add_argument("--limit_alphabet", type=int, default=6000)
 
-args = parser.parse_args()
+def main(corpus, size, limit, output):
+    train(corpus, size, limit, output)
 
-tokenizer = BertWordPieceTokenizer(
-    vocab_file=None,
-    clean_text=True,
-    handle_chinese_chars=True,
-    strip_accents=False, # Must be False if cased model
-    lowercase=False,
-    wordpieces_prefix="##"
-)
 
-tokenizer.train(
-    files=[args.corpus_file],
-    limit_alphabet=args.limit_alphabet,
-    vocab_size=args.vocab_size
-)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="create WordPieceModel vocabulary")
+    parser.add_argument("--corpus", type=str, nargs="+", help="corpus paths")
+    parser.add_argument("--size", type=int, default=32000, help="vocab size")
+    parser.add_argument("--limit_alphabet", type=int, default=6000, help="num of only one character")
+    parser.add_argument("--output", type=str, help="output(vocab) file path/name")
+    args = parser.parse_args()
 
-# tokenizer.save("./", "ch-{}-wpm-{}".format(args.limit_alphabet, args.vocab_size))
-tokenizer.save("./", "vocab_wpm2.txt")
+    main(args.corpus, args.size, args.limit_alphabet, args.output)

@@ -4,7 +4,7 @@ import sentencepiece as spm
 import os
 
 
-def train_SPM(corpus: str, size: int) -> None:
+def train(corpus: str, size: int) -> None:
     if os.path.exists("sentpiece.vocab"):
         print("[Alert] sentpiece.vocab is already existed")
         return None
@@ -21,7 +21,7 @@ def train_SPM(corpus: str, size: int) -> None:
     spm.SentencePieceTrainer.Train(param)
 
 
-def refine_vocab(dest: str) -> None:
+def process(output: str) -> None:
     with open('sentpiece.vocab', 'r', encoding='utf-8') as f:
         lines = f.readlines()
     vocab = [line.split("\t")[0] for line in lines]
@@ -38,22 +38,22 @@ def refine_vocab(dest: str) -> None:
         else:
             reverse_vocab.append("##" + word)
 
-    with open(dest, 'w', encoding='utf-8') as f:
+    with open(output, 'w', encoding='utf-8') as f:
         f.write("\n".join(reverse_vocab))
 
 
 def main(corpus, size, output):
-    train_SPM(corpus, size)
-    refine_vocab(output)
+    train(corpus, size)
+    process(output)
     # os.remove("sentpiece.vocab")
     # os.remove("sentpiece.model")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="make SentencePiece vocab")
+    parser = argparse.ArgumentParser(description="create SentencePieceModel vocabulary")
     parser.add_argument("--corpus", type=str, help="corpus path")
     parser.add_argument("--size", type=int, default=32000, help="vocab size")
-    parser.add_argument("--output", type=str, help="output path")
+    parser.add_argument("--output", type=str, help="output(vocab) file path/name")
     args = parser.parse_args()
 
     main(args.corpus, args.size, args.output)
